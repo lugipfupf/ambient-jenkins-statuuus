@@ -6,6 +6,11 @@ ambient-jenkins-statuuus is a little python project to show the states of jenkin
 * [Python Jenkins](https://python-jenkins.readthedocs.io/en/latest/), a python wrapper for the Jenkins REST API
 * [pySerial](https://pythonhosted.org/pyserial/), a module that encapsulates the access for the serial port
 
+# Extensibility
+Hacking the code without having a Blinky around proved to be a bit cumbersome. You can use the SvgAdapter which priodically generates a SVG file. Open the included status.html in any browser to see a simulated Blinky.
+
+If you want to write your own adapter make sure you implement the method `fade_to_colors(self, colors)`. Refer to current code for examples.
+
 ## Config
 All the configuration happens in the file `config.py`:
 ```
@@ -14,6 +19,11 @@ from datetime import time
 from model import Section
 from model import Led
 from model import Job
+
+# Use "blinky_adapter" / "BlinkyAdapter" for the actual Blinky
+# use "svg_adapter" / "SvgAdapter" if e.g. you are developing on a machine where there is no Blinky available
+status_module = "blinky_adapter"
+status_class = "BlinkyAdapter"
 
 # Number Of Leds
 led_count = 60

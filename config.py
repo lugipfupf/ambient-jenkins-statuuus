@@ -3,6 +3,9 @@ from model import Section
 from model import Led
 from model import Job
 
+status_module = "blinky_adapter"
+status_class = "BlinkyAdapter"
+
 led_count = 60
 request_interval = 60
 

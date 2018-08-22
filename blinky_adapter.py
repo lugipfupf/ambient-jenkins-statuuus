@@ -1,4 +1,5 @@
 import sys
+import logging
 import glob
 import time
 import BlinkyTape
@@ -8,6 +9,7 @@ import config
 class BlinkyAdapter(object):
 
     def __init__(self):
+        logging.basicConfig(filename=config.logging_logfile, level=config.logging_level)
         serial_ports = glob.glob("/dev/ttyACM0")
         port = serial_ports[0]
 

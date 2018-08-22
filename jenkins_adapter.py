@@ -2,11 +2,13 @@ import config
 import jenkins
 import copy
 import traceback
+import logging
 from datetime import datetime
 
 from model import SectionState
 
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
+logging.basicConfig(filename=config.logging_logfile, level=config.logging_level)
 
 
 def get_build_state(jenkins_job, job):
@@ -22,7 +24,9 @@ def get_build_state(jenkins_job, job):
 
 
 def get_build_states(job):
+    msg = '%s INFO: processing job "%s":"%s"' % (str(datetime.now()), job, job.name)
     build_states = []
+    logging.debug(msg)
 
     if job.pipeline:
         for child_job in server.get_job_info(job.name, 2)['jobs']:
@@ -55,10 +59,13 @@ def get_section_state_dict():
                     else:
                         section_state[section] = current_state
             except jenkins.NotFoundException:
-                print '%s WARNING: configured job "%s" for section "%s" not found' % (str(datetime.now()), job.name, section.name)
-            except jenkins.JenkinsException:
+                msg = '%s WARNING: configured job "%s" for section "%s" not found' % (str(datetime.now()), job.name, section.name)
+                print msg
+                logging.error(msg)
+            except jenkins.JenkinsException as e:
                 print '\t ----------------WARNING: error occured (JenkinsException):---------------------- '
                 print traceback.print_exc()
+                logging.error(str(e))
                 print '\t --------------------------------------------------------------------------------- '
     return section_state
 

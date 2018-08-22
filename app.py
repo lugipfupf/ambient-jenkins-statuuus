@@ -6,7 +6,6 @@ import sys
 import config
 from datetime import datetime
 from jenkins_adapter import get_section_state_dict
-from blinky_adapter import BlinkyAdapter
 from model import Led
 
 leds = [Led([0, 0, 0], None)] * 60
@@ -51,13 +50,17 @@ def blink_worker():
 
 if __name__ == "__main__":
     try:
-        blinky = BlinkyAdapter()
+        statusModule = __import__(config.status_module)
+        statusClass = getattr(statusModule, config.status_class)
+
+        blinky = statusClass()
 
         blinker = threading.Thread(target=blink_worker)
         blinker.daemon = True
         blinker.start()
 
         print("Starting...")
+        print("show status in browser: http://localhost:63342/ndbjs-ambient-jenkins-statuuus/status.html")
         while True:
             if active_time_range():
                 leds = get_colors()
